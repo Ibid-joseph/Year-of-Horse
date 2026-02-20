@@ -1,0 +1,637 @@
+# Year-of-Horse
+成语接物游戏
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <title>🐴 马到成功 - 2026成语填字挑战</title>
+    
+    <!-- 微信分享 Meta 信息 -->
+    <meta property="og:title" content="🐴 2026马年大吉！测测你的成语储备量，马到成功！">
+    <meta property="og:description" content="2026丙午马年特别版，接住正确的字，祝你新年马到成功！">
+    <meta property="og:image" content="https://img.alicdn.com/tfs/TB1.c9ZwVY7gK0jSZKzXXbikpXa-200-200.png">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #8B0000 0%, #C41E3A 25%, #DC143C 50%, #C41E3A 75%, #8B0000 100%);
+            font-family: 'Microsoft YaHei', 'KaiTi', 'STKaiti', serif;
+            overflow: hidden;
+            position: relative;
+            touch-action: none;
+        }
+
+        .bg-decoration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.1;
+            background-image: radial-gradient(circle, #FFD700 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .game-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 500px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+
+        .year-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #8B0000;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+            font-family: 'KaiTi', serif;
+        }
+
+        .main-title {
+            font-size: 42px;
+            color: #FFD700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 2px 2px 4px rgba(0,0,0,0.5);
+            font-weight: bold;
+            letter-spacing: 5px;
+            margin: 5px 0;
+            font-family: 'KaiTi', serif;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(255, 215, 0, 0.6); }
+            to { text-shadow: 0 0 20px rgba(255, 215, 0, 1), 0 0 30px rgba(255, 215, 0, 0.8); }
+        }
+
+        .info-bar {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            color: #FFD700;
+            font-size: 16px;
+            margin: 8px 0;
+            font-family: 'KaiTi', serif;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+        }
+
+        .idiom-box {
+            text-align: center;
+            margin-bottom: 5px;
+            flex-shrink: 0;
+        }
+
+        .idiom-text {
+            color: #FFD700;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            font-family: 'KaiTi', serif;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .hint-text {
+            color: #FFA500;
+            font-size: 14px;
+            margin-top: 2px;
+            font-family: 'KaiTi', serif;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 60vh; 
+            max-height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            border: 3px solid #FFD700;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            background: linear-gradient(135deg, #8B0000 0%, #C41E3A 100%);
+            max-width: 100%;
+            max-height: 100%;
+            touch-action: none;
+        }
+
+        #startBtn {
+            padding: 12px 40px;
+            font-size: 20px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #8B0000;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5);
+            font-family: 'KaiTi', serif;
+            transition: transform 0.2s;
+            flex-shrink: 0;
+        }
+
+        #startBtn:active {
+            transform: scale(0.95);
+        }
+
+        .ending-msg {
+            color: #FFD700;
+            font-size: 18px;
+            margin-top: 10px;
+            text-align: center;
+            font-family: 'KaiTi', serif;
+            animation: pulse 1.5s infinite;
+            display: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        .share-guide {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            align-items: flex-end;
+            padding: 20px;
+            cursor: pointer;
+        }
+
+        .share-arrow {
+            width: 60px;
+            height: 60px;
+            margin-top: 20px;
+            margin-right: 30px;
+        }
+        
+        .share-arrow::after {
+            content: '↗️';
+            font-size: 50px;
+            display: block;
+        }
+        
+        .share-text {
+            color: white;
+            font-size: 18px;
+            margin-top: 10px;
+            margin-right: 30px;
+            font-family: sans-serif;
+        }
+
+        @media (max-height: 600px) {
+            .main-title { font-size: 32px; }
+            .idiom-text { font-size: 24px; }
+            .canvas-container { height: 55vh; }
+            .info-bar { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-decoration"></div>
+
+    <!-- 微信分享引导层 -->
+    <div class="share-guide" id="shareGuide" onclick="closeShareGuide()">
+        <div class="share-text">点击右上角 <span style="color:#FFD700; font-weight:bold;">...</span> 分享给朋友</div>
+        <div class="share-arrow"></div>
+    </div>
+
+    <div class="game-wrapper">
+        <div class="header">
+            <div class="year-badge">🐴 2026 丙午马年 🐴</div>
+            <h1 class="main-title">马到成功</h1>
+        </div>
+
+        <div class="idiom-box">
+            <div class="idiom-text" id="idiomDisplay">成语加载中...</div>
+            <div class="hint-text" id="hintDisplay">💡 提示：等待开始</div>
+        </div>
+
+        <div class="info-bar">
+            <span>🧧 <span id="score">0</span></span>
+            <span>❤️ <span id="lives">3</span></span>
+            <span>🔥 <span id="combo">0</span></span>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+
+        <button id="startBtn" onclick="startGame()">🎊 开始游戏</button>
+        
+        <div class="ending-msg" id="endingMessage">
+            🎉 祝您新春愉快！马年大吉！ 🎉<br>
+            <span style="font-size:14px; color:#FFA500; margin-top:5px; display:block;" onclick="showShareGuide()">↗️ 分享给好友挑战</span>
+        </div>
+        
+        <div style="margin-top:10px; color:rgba(255,255,255,0.6); font-size:12px;">
+            左右滑动屏幕控制挡板
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const livesEl = document.getElementById('lives');
+        const comboEl = document.getElementById('combo');
+        const idiomDisplay = document.getElementById('idiomDisplay');
+        const hintDisplay = document.getElementById('hintDisplay');
+        const startBtn = document.getElementById('startBtn');
+        const endingMessage = document.getElementById('endingMessage');
+        const shareGuide = document.getElementById('shareGuide');
+
+        // 适配屏幕尺寸
+        function resizeCanvas() {
+            const container = document.querySelector('.canvas-container');
+            const rect = container.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            
+            if(!gameRunning && !isGameOver) {
+                paddle.x = canvas.width / 2 - paddle.width / 2;
+                paddle.y = canvas.height - 50;
+            }
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+
+        // 🐴 马年成语库
+        const idiomBank = [
+            { idiom: "马到成功", missing: "到", hint: "事情一开始就顺利成功" },
+            { idiom: "马到成功", missing: "成", hint: "事情一开始就顺利成功" },
+            { idiom: "马到成功", missing: "功", hint: "事情一开始就顺利成功" },
+            { idiom: "一马当先", missing: "马", hint: "形容领先，走在最前面" },
+            { idiom: "一马当先", missing: "当", hint: "形容领先，走在最前面" },
+            { idiom: "一马当先", missing: "先", hint: "形容领先，走在最前面" },
+            { idiom: "万马奔腾", missing: "马", hint: "形容声势浩大，场面壮观" },
+            { idiom: "万马奔腾", missing: "奔", hint: "形容声势浩大，场面壮观" },
+            { idiom: "万马奔腾", missing: "腾", hint: "形容声势浩大，场面壮观" },
+            { idiom: "龙马精神", missing: "马", hint: "形容精神饱满，充满活力" },
+            { idiom: "龙马精神", missing: "精", hint: "形容精神饱满，充满活力" },
+            { idiom: "龙马精神", missing: "神", hint: "形容精神饱满，充满活力" },
+            { idiom: "快马加鞭", missing: "马", hint: "比喻快上加快，再接再厉" },
+            { idiom: "快马加鞭", missing: "加", hint: "比喻快上加快，再接再厉" },
+            { idiom: "快马加鞭", missing: "鞭", hint: "比喻快上加快，再接再厉" },
+            { idiom: "汗马功劳", missing: "马", hint: "指卓越的功绩" },
+            { idiom: "汗马功劳", missing: "功", hint: "指卓越的功绩" },
+            { idiom: "汗马功劳", missing: "劳", hint: "指卓越的功绩" },
+            { idiom: "老马识途", missing: "马", hint: "比喻有经验的人熟悉情况" },
+            { idiom: "老马识途", missing: "识", hint: "比喻有经验的人熟悉情况" },
+            { idiom: "老马识途", missing: "途", hint: "比喻有经验的人熟悉情况" },
+            { idiom: "走马观花", missing: "马", hint: "比喻粗略地观察事物" },
+            { idiom: "走马观花", missing: "观", hint: "比喻粗略地观察事物" },
+            { idiom: "走马观花", missing: "花", hint: "比喻粗略地观察事物" },
+            { idiom: "青梅竹马", missing: "梅", hint: "形容男女小时候天真无邪" },
+            { idiom: "青梅竹马", missing: "竹", hint: "形容男女小时候天真无邪" },
+            { idiom: "青梅竹马", missing: "马", hint: "形容男女小时候天真无邪" },
+            { idiom: "马不停蹄", missing: "不", hint: "比喻一刻也不停留" },
+            { idiom: "马不停蹄", missing: "停", hint: "比喻一刻也不停留" },
+            { idiom: "马不停蹄", missing: "蹄", hint: "比喻一刻也不停留" },
+            { idiom: "天马行空", missing: "马", hint: "比喻思想奔放，不受拘束" },
+            { idiom: "天马行空", missing: "行", hint: "比喻思想奔放，不受拘束" },
+            { idiom: "天马行空", missing: "空", hint: "比喻思想奔放，不受拘束" },
+            { idiom: "车水马龙", missing: "水", hint: "形容车马往来，非常热闹" },
+            { idiom: "车水马龙", missing: "马", hint: "形容车马往来，非常热闹" },
+            { idiom: "车水马龙", missing: "龙", hint: "形容车马往来，非常热闹" },
+            { idiom: "悬崖勒马", missing: "崖", hint: "比喻到了危险边缘及时回头" },
+            { idiom: "悬崖勒马", missing: "勒", hint: "比喻到了危险边缘及时回头" },
+            { idiom: "悬崖勒马", missing: "马", hint: "比喻到了危险边缘及时回头" },
+            { idiom: "千军万马", missing: "军", hint: "形容兵马众多，声势浩大" },
+            { idiom: "千军万马", missing: "马", hint: "形容兵马众多，声势浩大" },
+            { idiom: "单枪匹马", missing: "枪", hint: "比喻单独行动，无人帮助" },
+            { idiom: "单枪匹马", missing: "马", hint: "比喻单独行动，无人帮助" },
+            { idiom: "金戈铁马", missing: "戈", hint: "形容战争或战士的英姿" },
+            { idiom: "金戈铁马", missing: "铁", hint: "形容战争或战士的英姿" },
+            { idiom: "金戈铁马", missing: "马", hint: "形容战争或战士的英姿" },
+            { idiom: "人仰马翻", missing: "仰", hint: "形容混乱或忙乱不堪" },
+            { idiom: "人仰马翻", missing: "马", hint: "形容混乱或忙乱不堪" },
+            { idiom: "人仰马翻", missing: "翻", hint: "形容混乱或忙乱不堪" },
+            { idiom: "心猿意马", missing: "猿", hint: "形容心思不专，变化无常" },
+            { idiom: "心猿意马", missing: "马", hint: "形容心思不专，变化无常" },
+            { idiom: "害群之马", missing: "群", hint: "比喻危害集体的人" },
+            { idiom: "害群之马", missing: "马", hint: "比喻危害集体的人" },
+            { idiom: "马首是瞻", missing: "首", hint: "比喻服从指挥或追随别人" },
+            { idiom: "马首是瞻", missing: "马", hint: "比喻服从指挥或追随别人" },
+            { idiom: "马首是瞻", missing: "瞻", hint: "比喻服从指挥或追随别人" },
+            { idiom: "马革裹尸", missing: "革", hint: "形容将士战死沙场的英勇" },
+            { idiom: "马革裹尸", missing: "马", hint: "形容将士战死沙场的英勇" },
+            { idiom: "马放南山", missing: "放", hint: "比喻天下太平，不再用兵" },
+            { idiom: "马放南山", missing: "马", hint: "比喻天下太平，不再用兵" },
+            { idiom: "马放南山", missing: "山", hint: "比喻天下太平，不再用兵" },
+            { idiom: "露马脚", missing: "马", hint: "比喻暴露了隐蔽的事实真相" },
+            { idiom: "露马脚", missing: "脚", hint: "比喻暴露了隐蔽的事实真相" },
+            { idiom: "下马威", missing: "马", hint: "一开始就向对方显示威力" },
+            { idiom: "下马威", missing: "威", hint: "一开始就向对方显示威力" },
+            { idiom: "走马上任", missing: "马", hint: "指官吏就职" },
+            { idiom: "走马上任", missing: "任", hint: "指官吏就职" },
+            { idiom: "跃马扬鞭", missing: "马", hint: "形容意气风发，奋勇前进" },
+            { idiom: "跃马扬鞭", missing: "扬", hint: "形容意气风发，奋勇前进" },
+            { idiom: "跃马扬鞭", missing: "鞭", hint: "形容意气风发，奋勇前进" },
+            { idiom: "信马由缰", missing: "马", hint: "比喻漫无目的地闲逛或随意行动" },
+            { idiom: "信马由缰", missing: "缰", hint: "比喻漫无目的地闲逛或随意行动" },
+            { idiom: "鞍马劳顿", missing: "马", hint: "形容旅途或征战劳苦" },
+            { idiom: "鞍马劳顿", missing: "劳", hint: "形容旅途或征战劳苦" },
+            { idiom: "鲜衣怒马", missing: "衣", hint: "形容生活豪华，意气风发" },
+            { idiom: "鲜衣怒马", missing: "马", hint: "形容生活豪华，意气风发" },
+            { idiom: "香车宝马", missing: "车", hint: "形容富贵人家豪华的生活" },
+            { idiom: "香车宝马", missing: "马", hint: "形容富贵人家豪华的生活" },
+            { idiom: "人强马壮", missing: "强", hint: "形容军队或团队实力强大" },
+            { idiom: "人强马壮", missing: "马", hint: "形容军队或团队实力强大" },
+            { idiom: "马踏飞燕", missing: "踏", hint: "形容速度极快，姿态矫健" },
+            { idiom: "马踏飞燕", missing: "马", hint: "形容速度极快，姿态矫健" },
+            { idiom: "立马当先", missing: "马", hint: "形容立即行动，走在前面" },
+            { idiom: "立马当先", missing: "当", hint: "形容立即行动，走在前面" },
+            { idiom: "万马齐喑", missing: "马", hint: "比喻人们都沉默，不敢说话" },
+            { idiom: "万马齐喑", missing: "喑", hint: "比喻人们都沉默，不敢说话" },
+            { idiom: "指鹿为马", missing: "鹿", hint: "比喻故意颠倒黑白，混淆是非" },
+            { idiom: "指鹿为马", missing: "马", hint: "比喻故意颠倒黑白，混淆是非" },
+            { idiom: "非驴非马", missing: "驴", hint: "比喻不伦不类，什么也不像" },
+            { idiom: "非驴非马", missing: "马", hint: "比喻不伦不类，什么也不像" }
+        ];
+
+        let gameRunning = false;
+        let isGameOver = false;
+        let score = 0;
+        let lives = 3;
+        let combo = 0;
+        let currentIdiom = null;
+        let correctChar = '';
+
+        const paddle = {
+            width: 100,
+            height: 15,
+            x: 0, 
+            y: 0,
+            speed: 0
+        };
+
+        let items = [];
+        const commonChars = "天地人大小上下左右东西南北中金木水火土日月风云雨雪山川福禄寿喜吉祥安康";
+
+        // 触摸控制
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (!gameRunning) return;
+            
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const touchXInCanvas = (touch.clientX - rect.left) / rect.width * canvas.width;
+            
+            let newX = touchXInCanvas - paddle.width / 2;
+            if (newX < 0) newX = 0;
+            if (newX > canvas.width - paddle.width) newX = canvas.width - paddle.width;
+            
+            paddle.x = newX;
+        }, { passive: false });
+
+        // 鼠标兼容
+        canvas.addEventListener('mousemove', (e) => {
+            if (!gameRunning) return;
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = (e.clientX - rect.left) / rect.width * canvas.width;
+            let newX = mouseX - paddle.width / 2;
+            if (newX < 0) newX = 0;
+            if (newX > canvas.width - paddle.width) newX = canvas.width - paddle.width;
+            paddle.x = newX;
+        });
+
+        function selectNewIdiom() {
+            const randomIndex = Math.floor(Math.random() * idiomBank.length);
+            currentIdiom = idiomBank[randomIndex];
+            correctChar = currentIdiom.missing;
+            const displayIdiom = currentIdiom.idiom.replace(correctChar, '▢');
+            idiomDisplay.textContent = displayIdiom;
+            hintDisplay.textContent = `💡 提示：${currentIdiom.hint}`;
+        }
+
+        function createItem() {
+            const isCorrect = Math.random() < 0.5;
+            let char;
+            if (isCorrect && currentIdiom) {
+                char = correctChar;
+            } else {
+                do {
+                    char = commonChars[Math.floor(Math.random() * commonChars.length)];
+                } while (char === correctChar);
+            }
+            
+            const baseSize = canvas.width * 0.08; 
+            items.push({
+                x: Math.random() * (canvas.width - baseSize),
+                y: -baseSize,
+                size: baseSize,
+                speed: (canvas.height * 0.008) + (Math.random() * canvas.height * 0.005),
+                char: char,
+                isCorrect: isCorrect && char === correctChar
+            });
+        }
+
+        function update() {
+            if (!gameRunning) return;
+
+            paddle.width = canvas.width * 0.25;
+            paddle.y = canvas.height - 50;
+            if (paddle.x > canvas.width - paddle.width) paddle.x = canvas.width - paddle.width;
+
+            items.forEach((item, index) => {
+                item.y += item.speed;
+
+                if (
+                    item.y + item.size >= paddle.y &&
+                    item.y <= paddle.y + paddle.height &&
+                    item.x + item.size >= paddle.x &&
+                    item.x <= paddle.x + paddle.width
+                ) {
+                    if (item.isCorrect) {
+                        score += 20 + combo * 5;
+                        combo++;
+                        scoreEl.textContent = score;
+                        comboEl.textContent = combo;
+                        showFeedback('✓', item.x, item.y, '#FFD700');
+                        selectNewIdiom();
+                    } else {
+                        lives -= 1;
+                        combo = 0;
+                        livesEl.textContent = lives;
+                        comboEl.textContent = combo;
+                        showFeedback('✗', item.x, item.y, '#FF6B6B');
+                        if (lives <= 0) gameOver();
+                    }
+                    items.splice(index, 1);
+                } else if (item.y > canvas.height) {
+                    items.splice(index, 1);
+                }
+            });
+
+            if (Math.random() < 0.03) createItem();
+        }
+
+        let feedbacks = [];
+        function showFeedback(text, x, y, color) {
+            feedbacks.push({ text, x, y, color, alpha: 1, life: 30 });
+        }
+
+        function draw() {
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#8B0000');
+            gradient.addColorStop(1, '#C41E3A');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.1)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < canvas.width; i += 40) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            }
+            for (let i = 0; i < canvas.height; i += 40) {
+                ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+            }
+
+            const pGrad = ctx.createLinearGradient(paddle.x, paddle.y, paddle.x + paddle.width, paddle.y);
+            pGrad.addColorStop(0, '#FFD700');
+            pGrad.addColorStop(0.5, '#FFA500');
+            pGrad.addColorStop(1, '#FFD700');
+            ctx.fillStyle = pGrad;
+            ctx.shadowColor = '#FFD700';
+            ctx.shadowBlur = 15;
+            ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#8B0000';
+            ctx.font = `bold ${canvas.width * 0.04}px KaiTi`;
+            ctx.textAlign = 'center';
+            ctx.fillText('🐴 马到成功 🐴', paddle.x + paddle.width/2, paddle.y + 12);
+
+            items.forEach(item => {
+                ctx.font = `bold ${item.size}px Microsoft YaHei`;
+                ctx.fillStyle = '#FFFFFF';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(item.char, item.x + item.size/2, item.y + item.size/2);
+                ctx.strokeStyle = 'rgba(255, 215, 0, 0.5)';
+                ctx.lineWidth = 1;
+                ctx.strokeText(item.char, item.x + item.size/2, item.y + item.size/2);
+            });
+
+            feedbacks.forEach((fb, i) => {
+                ctx.globalAlpha = fb.alpha;
+                ctx.font = `bold ${canvas.width * 0.1}px Arial`;
+                ctx.fillStyle = fb.color;
+                ctx.fillText(fb.text, fb.x, fb.y);
+                ctx.globalAlpha = 1;
+                fb.alpha -= 0.05;
+                fb.y -= 2;
+                fb.life--;
+                if (fb.life <= 0) feedbacks.splice(i, 1);
+            });
+
+            if (!gameRunning && isGameOver) {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#FFD700';
+                ctx.font = `bold ${canvas.width * 0.08}px KaiTi`;
+                ctx.textAlign = 'center';
+                ctx.fillText('游戏结束', canvas.width/2, canvas.height/2 - 20);
+                ctx.font = `${canvas.width * 0.05}px KaiTi`;
+                ctx.fillText(`得分：${score}`, canvas.width/2, canvas.height/2 + 20);
+                ctx.fillText(`连对：${combo}`, canvas.width/2, canvas.height/2 + 50);
+            }
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function startGame() {
+            resizeCanvas();
+            gameRunning = true;
+            isGameOver = false;
+            score = 0;
+            lives = 3;
+            combo = 0;
+            items = [];
+            feedbacks = [];
+            paddle.x = canvas.width / 2 - paddle.width / 2;
+            scoreEl.textContent = score;
+            livesEl.textContent = lives;
+            comboEl.textContent = combo;
+            startBtn.style.display = 'none';
+            endingMessage.style.display = 'none';
+            selectNewIdiom();
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            isGameOver = true;
+            startBtn.style.display = 'inline-block';
+            startBtn.textContent = '🔄 再玩一次';
+            idiomDisplay.textContent = '游戏结束';
+            hintDisplay.textContent = '';
+            endingMessage.style.display = 'block';
+        }
+
+        function showShareGuide() {
+            shareGuide.style.display = 'flex';
+        }
+        function closeShareGuide() {
+            shareGuide.style.display = 'none';
+        }
+
+        resizeCanvas();
+        gameLoop();
+    </script>
+</body>
+</html>
